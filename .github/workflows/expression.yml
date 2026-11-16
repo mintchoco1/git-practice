@@ -1,0 +1,42 @@
+name: Expressions
+on: workflow_dispatch
+jobs:
+  expr:
+    runs-on: ubuntu-latest
+    env:
+      FRUITS: '[{"name":"apple","price":1000},{"name":"banana","price":2000}]'
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Literal
+        run: |
+          echo "string : ${{ 'hello' }}"
+          echo "number : ${{ 3.14 }}"
+          echo "boolean: ${{ true }}"
+          echo "null   : ${{ null }}"
+
+      - name: Operator
+        run: |
+          echo "1 == 1     : ${{ 1 == 1 }}"
+          echo "!true      : ${{ !true }}"
+          echo "abc == ABC : ${{ 'abc' == 'ABC' }}"
+          echo "true == 1  : ${{ true == 1 }}"
+          echo "&& 조합    : ${{ github.event_name == 'workflow_dispatch' && runner.os == 'Linux' }}"
+
+      - name: Object filter
+        run: |
+          echo "first name : ${{ fromJSON(env.FRUITS)[0].name }}"
+          echo "all names  : ${{ join(fromJSON(env.FRUITS).*.name, ', ') }}"
+          echo "all prices : ${{ join(fromJSON(env.FRUITS).*.price, ', ') }}"
+
+      - name: Functions
+        env:
+          RUNNER_JSON: ${{ toJSON(runner) }}
+        run: |
+          echo "contains   : ${{ contains('Hello world', 'world') }}"
+          echo "startsWith : ${{ startsWith(github.repository, github.actor) }}"
+          echo "endsWith   : ${{ endsWith('hello.yml', '.yml') }}"
+          echo "format     : ${{ format('{0} ran {1}', github.actor, github.workflow) }}"
+          echo "hashFiles  : ${{ hashFiles('README.md') }}"
+          echo "toJSON(runner):"
+          echo "$RUNNER_JSON"
