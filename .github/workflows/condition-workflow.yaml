@@ -1,0 +1,20 @@
+name: Job Status Example
+on: workflow_dispatch
+jobs:
+  job1:
+    if: ${{ github.actor == 'guest' }}   # guest 계정일 때만
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Job1 executed successfully"
+
+  job2:
+    needs: job1                          # job1이 성공해야 실행
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Job2 executed"
+
+  job3:
+    needs: job2                          # job2가 성공해야 실행
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Job3 executed"
